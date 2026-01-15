@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,17 +8,19 @@
 </head>
 <body>
     <div id="app">
-        <header>
-            <h1>OldHelper</h1>
-            <p>iOS 12 Edition</p>
-        </header>
+        <header><h1>OldHelper AI</h1></header>
         <div id="chat-window"></div>
+        
+        <div id="training-zone">
+            <textarea id="corpus" placeholder="Paste text here to teach the AI..."></textarea>
+            <button id="train-btn">Train Brain</button>
+        </div>
+
         <div class="input-area">
-            <input type="text" id="user-input" placeholder="Type a message...">
+            <input type="text" id="user-input" placeholder="Talk to me...">
             <button id="send-btn">Send</button>
         </div>
     </div>
-    <script src="config.js"></script>
-    <script src="chat.js"></script>
+    <script src="ai-engine.js"></script>
 </body>
 </html>
