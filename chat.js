@@ -1,58 +1,50 @@
-const chatWindow = document.getElementById('chat-window');
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
+var chatWindow = document.getElementById('chat-window');
+var userInput = document.getElementById('user-input');
+var sendBtn = document.getElementById('send-btn');
 
+// 1. The Knowledge Base (The "Brain")
+var knowledge = [
+    { pattern: /hi|hello|hey/i, responses: ["Hello there!", "Hi! I'm OldHelper.", "Greetings!"] },
+    { pattern: /how are you/i, responses: ["I'm doing great for an old phone!", "System check: 100% functional."] },
+    { pattern: /name/i, responses: ["My name is OldHelper.", "You can call me OldHelper."] },
+    { pattern: /iphone 6|old/i, responses: ["I love this hardware! It's a classic.", "Vintage is better, don't you think?"] },
+    { pattern: /weather/i, responses: ["I can't see outside, but it feels like 72°F in this circuit board."] },
+    { pattern: /bye|goodbye/i, responses: ["Goodbye! Come back soon.", "Ending session... just kidding, bye!"] }
+];
+
+// 2. The Logic
+function getResponse(text) {
+    // Look through the knowledge base for a match
+    for (var i = 0; i < knowledge.length; i++) {
+        if (knowledge[i].pattern.test(text)) {
+            var possibleResponses = knowledge[i].responses;
+            // Pick a random response from the list
+            return possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+        }
+    }
+    // Fallback if the bot doesn't understand
+    return "That's interesting! Tell me more about that.";
+}
+
+// 3. UI Functions
 function addMessage(text, sender) {
-    const div = document.createElement('div');
+    var div = document.createElement('div');
     div.className = 'message ' + sender;
     div.innerText = text;
     chatWindow.appendChild(div);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-async function getAIResponse(prompt) {
-    // We use a CORS Proxy to bypass browser security restrictions
-    const proxyUrl = 'https://api.allorigins.win/get?url=';
-    const targetUrl = encodeURIComponent(CONFIG.API_URL);
-
-    try {
-        const response = await fetch(proxyUrl + targetUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                // Note: Some proxies require specific formats. 
-                // If AllOrigins fails, we may need to switch to a dedicated Worker.
-                model: CONFIG.MODEL,
-                messages: [{role: "user", content: prompt}],
-                apiKey: CONFIG.API_KEY // Sent inside body for the proxy
-            })
-        });
-
-        // If you still get an error, it might be the Proxy's format.
-        // Let's try the direct method with a 'No-CORS' hint if the above fails.
-        const data = await response.json();
-        const contents = JSON.parse(data.contents);
-        return contents.choices[0].message.content;
-        
-    } catch (error) {
-        console.error(error);
-        return "Error: OldHelper is having trouble reaching the brain. Check your API Key!";
-    }
-}
-
-sendBtn.onclick = async () => {
-    const text = userInput.value;
+sendBtn.onclick = function() {
+    var text = userInput.value.trim();
     if (!text) return;
     
     addMessage(text, 'user');
     userInput.value = '';
     
-    addMessage("...", 'helper'); // Loading indicator
-    const aiText = await getAIResponse(text);
-    
-    // Remove the "..." and add the real response
-    chatWindow.lastChild.remove();
-    addMessage(aiText, 'helper');
+    // Simulate "thinking" delay
+    setTimeout(function() {
+        var reply = getResponse(text);
+        addMessage(reply, 'helper');
+    }, 500);
 };
